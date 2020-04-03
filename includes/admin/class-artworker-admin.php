@@ -46,6 +46,10 @@ class Artworker_Admin {
 
 		$this->_includes();
 
+		add_filter( 'manage_artwork_posts_columns', array( $this, 'set_artwork_image_column' ) );
+		add_action( 'manage_artwork_posts_custom_column' , array( $this, 'render_artwork_column' ), 10, 2 );
+		add_action( 'admin_head', array( $this, 'style_artwork_column' ) );
+
 		add_filter( 'display_post_states', array( $this, 'artworker_add_custom_post_states' ) );
 
 	}
@@ -58,6 +62,45 @@ class Artworker_Admin {
 
 	}
 
+	public function style_artwork_column() {
+		echo '<style type="text/css">';
+		echo '.wp-list-table .column-artwork {
+			  	width: 100px;
+			  }';
+		echo '</style>';		
+	}
+
+	public function set_artwork_image_column( $columns ) {
+
+	    $columns = array(
+			'cb' => $columns['cb'],
+			'artwork' => __( 'Artwork', 'artworker' ),
+			'title' => $columns['title'],
+			'author' => $columns['author'],
+			'taxonomy-artwork_cat' => $columns['taxonomy-artwork_cat'],
+			'taxonomy-artwork_tag' => $columns['taxonomy-artwork_tag'],
+			'comments' => $columns['comments'],
+			'date' => $columns['date']
+	    );
+
+	    return $columns;		
+	}
+
+	public function render_artwork_column( $column, $post_id ) {
+
+		if( $column != 'artwork' )
+			return $column;
+
+		$artwork_data = json_decode( get_post_meta( $post_id , 'artworker/artwork-data' , true ), true );
+		$artwork = '-';
+
+
+		if( array_key_exists( 'id', $artwork_data ) )
+			$artwork = wp_get_attachment_image_src( absint( $artwork_data['id'] ) );
+
+		echo '<a href="'. esc_url( get_edit_post_link( $post_id ) ) .'" ><img src="'. esc_url( $artwork[0] ) .'" alt="Art thumbnail" title="" width="90" height="90" /></a>';
+
+	}
 
 	public function artworker_add_custom_post_states( $states ) {
 	    global $post;
