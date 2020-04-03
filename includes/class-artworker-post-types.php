@@ -111,8 +111,94 @@ class Artworker_Post_Types {
 			return;
 		}
 
+		$permalinks = artworker_get_permalink_structure();
+
 		do_action( 'artworker_register_taxonomy' );
 
+		register_taxonomy(
+			'artwork_cat',
+			apply_filters( 'artworker_taxonomy_objects_artwork_cat', array( 'artwork' ) ),
+			apply_filters(
+				'artworker_taxonomy_args_artwork_cat',
+				array(
+					'hierarchical'          => true,
+					'update_count_callback' => '_artworker_term_recount',
+					'label'                 => __( 'Categories', 'artworker' ),
+					'labels'                => array(
+						'name'              => __( 'Artwork categories', 'artworker' ),
+						'singular_name'     => __( 'Category', 'artworker' ),
+						'menu_name'         => _x( 'Categories', 'Admin menu name', 'artworker' ),
+						'search_items'      => __( 'Search categories', 'artworker' ),
+						'all_items'         => __( 'All categories', 'artworker' ),
+						'parent_item'       => __( 'Parent category', 'artworker' ),
+						'parent_item_colon' => __( 'Parent category:', 'artworker' ),
+						'edit_item'         => __( 'Edit category', 'artworker' ),
+						'update_item'       => __( 'Update category', 'artworker' ),
+						'add_new_item'      => __( 'Add new category', 'artworker' ),
+						'new_item_name'     => __( 'New category name', 'artworker' ),
+						'not_found'         => __( 'No categories found', 'artworker' ),
+					),
+					'show_ui'               => true,
+					'show_admin_column'		=> true,
+					'show_in_rest'			=> true,
+					'query_var'             => true,
+					'capabilities'          => array(
+						'manage_terms' => 'manage_artwork_terms',
+						'edit_terms'   => 'edit_artwork_terms',
+						'delete_terms' => 'delete_artwork_terms',
+						'assign_terms' => 'assign_artwork_terms',
+					),
+					'rewrite'               => array(
+						'slug'         => $permalinks['category_rewrite_slug'],
+						'with_front'   => false,
+						'hierarchical' => true,
+					),
+				)
+			)
+		);
+
+		register_taxonomy(
+			'artwork_tag',
+			apply_filters( 'artworker_taxonomy_objects_artwork_tag', array( 'artwork' ) ),
+			apply_filters(
+				'artworker_taxonomy_args_artwork_tag',
+				array(
+					'hierarchical'          => false,
+					'update_count_callback' => '_artworker_term_recount',
+					'label'                 => __( 'Artwork tags', 'artworker' ),
+					'labels'                => array(
+						'name'                       => __( 'Artwork tags', 'artworker' ),
+						'singular_name'              => __( 'Tag', 'artworker' ),
+						'menu_name'                  => _x( 'Tags', 'Admin menu name', 'artworker' ),
+						'search_items'               => __( 'Search tags', 'artworker' ),
+						'all_items'                  => __( 'All tags', 'artworker' ),
+						'edit_item'                  => __( 'Edit tag', 'artworker' ),
+						'update_item'                => __( 'Update tag', 'artworker' ),
+						'add_new_item'               => __( 'Add new tag', 'artworker' ),
+						'new_item_name'              => __( 'New tag name', 'artworker' ),
+						'popular_items'              => __( 'Popular tags', 'artworker' ),
+						'separate_items_with_commas' => __( 'Separate tags with commas', 'artworker' ),
+						'add_or_remove_items'        => __( 'Add or remove tags', 'artworker' ),
+						'choose_from_most_used'      => __( 'Choose from the most used tags', 'artworker' ),
+						'not_found'                  => __( 'No tags found', 'artworker' ),
+					),
+					'show_ui'               => true,
+					'show_admin_column'		=> true,
+					'show_in_rest'			=> true,
+					'query_var'             => true,
+					'capabilities'          => array(
+						'manage_terms' => 'manage_artwork_terms',
+						'edit_terms'   => 'edit_artwork_terms',
+						'delete_terms' => 'delete_artwork_terms',
+						'assign_terms' => 'assign_artwork_terms',
+					),
+					'rewrite'               => array(
+						'slug'       => $permalinks['tag_rewrite_slug'],
+						'with_front' => false,
+					),
+				)
+			)
+		);
 
 		do_action( 'artworker_after_register_taxonomy' );
 	}
