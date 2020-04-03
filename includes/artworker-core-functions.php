@@ -61,6 +61,43 @@ function artworker_get_theme_support( $prop = '', $default = null ) {
 }
 
 /**
+ * Get permalink settings for things like artwork and taxonomies.
+ *
+ * As of 1.0.0, the permalink settings are stored to the option instead of
+ * being blank and inheritting from the locale. This speeds up page loading
+ * times by negating the need to switch locales on each page load.
+ *
+ * This is more inline with WP core behavior which does not localize slugs.
+ *
+ * @since  1.0.0
+ * @return array
+ */
+function artworker_get_permalink_structure() {
+	$saved_permalinks = (array) get_option( 'artworker_permalinks', array() );
+	$permalinks       = wp_parse_args(
+		array_filter( $saved_permalinks ),
+		array(
+			'artwork_base'           => _x( 'gallery', 'slug', 'artworker' ),
+			'category_base'          => _x( 'artwork-category', 'slug', 'artworker' ),
+			'tag_base'               => _x( 'artwork-tag', 'slug', 'artworker' ),
+			'attribute_base'         => '',
+			'use_verbose_page_rules' => false,
+		)
+	);
+
+	if ( $saved_permalinks !== $permalinks ) {
+		update_option( 'artworker_permalinks', $permalinks );
+	}
+
+	$permalinks['artwork_rewrite_slug']   = untrailingslashit( $permalinks['artwork_base'] );
+	$permalinks['category_rewrite_slug']  = untrailingslashit( $permalinks['category_base'] );
+	$permalinks['tag_rewrite_slug']       = untrailingslashit( $permalinks['tag_base'] );
+	$permalinks['attribute_rewrite_slug'] = untrailingslashit( $permalinks['attribute_base'] );
+
+	return $permalinks;
+}
+
+/**
  * Get page id from admin settings page
  *
  * @param string $name
