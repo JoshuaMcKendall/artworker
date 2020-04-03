@@ -406,7 +406,7 @@ if ( ! function_exists( 'artworker_artwork_loop_end' ) ) {
 	}
 }
 
-if ( ! function_exists( 'woocommerce_pagination' ) ) {
+if ( ! function_exists( 'artworker_pagination' ) ) {
 
 	/**
 	 * Output the pagination.

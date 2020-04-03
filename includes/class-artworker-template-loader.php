@@ -2,7 +2,7 @@
 /**
  * The Artworker Template Loader class
  *
- * @link       https://github.com/JoshuaMcKendall/Artworker-Plugin/includes/
+ * @link       https://github.com/JoshuaMcKendall/artworker/tree/master/includes
  * @since      1.0.0
  *
  * @package    Artworker
@@ -67,7 +67,7 @@ class Artworker_Template_Loader {
 	 *
 	 * Handles template usage so that we can use our own templates instead of the theme's.
 	 *
-	 * Templates are in the 'templates' folder. WooCommerce looks for theme
+	 * Templates are in the 'templates' folder. Artworker looks for theme
 	 * overrides in /theme/artworker/ by default.
 	 *
 	 *
@@ -83,9 +83,9 @@ class Artworker_Template_Loader {
 
 		if ( $default_file ) {
 			/**
-			 * Filter hook to choose which files to find before WooCommerce does it's own logic.
+			 * Filter hook to choose which files to find before Artworker does it's own logic.
 			 *
-			 * @since 3.0.0
+			 * @since 1.0.0
 			 * @var array
 			 */
 			$search_files = self::get_template_loader_files( $default_file );
@@ -115,7 +115,7 @@ class Artworker_Template_Loader {
 				$default_file = 'archive-artwork.php';
 			}
 		} elseif ( is_post_type_archive( 'artwork' ) || is_page( artworker_get_page_id( 'gallery' ) ) ) {
-			$default_file = self::$theme_support ? 'archive-artwork.php' : 'archive-artwork.php';
+			$default_file = 'archive-artwork.php';
 		} else {
 			$default_file = '';
 		}

@@ -2,8 +2,8 @@
 /**
  * Artworker Data Store WP class
  *
- * @link       https://github.com/JoshuaMcKendall/artworker/tree/master/includes/
- * @since      1.0.0
+ * @link https://github.com/JoshuaMcKendall/artworker/tree/master/includes/data-stroes
+ * @since 1.0.0
  *
  * @package    Artworker
  * @subpackage Artworker/includes

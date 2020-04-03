@@ -3,7 +3,7 @@
 /**
  * Fired during plugin activation
  *
- * @link       https://github.com/JoshuaMcKendall/Artworker-Plugin/includes/
+ * @link       https://github.com/JoshuaMcKendall/artworker/tree/master/includes
  * @since      1.0.0
  *
  * @package    Artworker

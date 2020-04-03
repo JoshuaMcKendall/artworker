@@ -1,15 +1,25 @@
 <?php
 /**
- * Artworker Admin Settings class
+ * The Artworker Admin Settings class
  *
- * @author        Joshua McKendall
- * @package       Artworker/Class
- * @version       1.0.0
+ * @link       https://github.com/JoshuaMcKendall/artworker/tree/master/includes/admin/
+ * @since      1.0.0
+ *
+ * @package    Artworker
+ * @subpackage Artworker/includes
  */
 
 /**
- * Prevent loading this file directly
+ * The Artworker Admin Settings class
+ *
+ * This class loads the admin settings for Artworker.
+ *
+ * @since      1.0.0
+ * @package    Artworker
+ * @subpackage Artworker/includes
+ * @author     Joshua McKendall <artworker@joshuamckendall.com>
  */
+
 defined( 'ABSPATH' ) || exit;
 
 class Artworker_Admin_Settings {

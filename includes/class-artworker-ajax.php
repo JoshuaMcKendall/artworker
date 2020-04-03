@@ -2,7 +2,7 @@
 /**
  * Artworker Ajax class
  *
- * @link       https://github.com/JoshuaMcKendall/Illustrator-Plugin/includes/
+ * @link       https://github.com/JoshuaMcKendall/artworker/tree/master/includes
  * @since      1.0.0
  *
  * @package    Artworker

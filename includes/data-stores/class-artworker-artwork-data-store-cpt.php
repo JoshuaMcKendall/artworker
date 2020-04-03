@@ -2,7 +2,7 @@
 /**
  * Artworker Artwork Data Store CPT class
  *
- * @link       https://github.com/JoshuaMcKendall/artworker/tree/master/includes/
+ * @link https://github.com/JoshuaMcKendall/artworker/tree/master/includes/data-stroes
  * @since      1.0.0
  *
  * @package    Artworker
@@ -78,7 +78,7 @@ class Artworker_Artwork_Data_Store_CPT extends Artworker_Data_Store_WP implement
 	/**
 	 * Get valid WP_Query args from a WC_Product_Query's query variables.
 	 *
-	 * @since 3.2.0
+	 * @since 1.0.0
 	 * @param array $query_vars Query vars from a WC_Product_Query.
 	 * @return array
 	 */
@@ -162,7 +162,7 @@ class Artworker_Artwork_Data_Store_CPT extends Artworker_Data_Store_WP implement
 			$wp_query_args['orderby'] = 'post__in';
 		}
 
-		return apply_filters( 'woocommerce_product_data_store_cpt_get_products_query', $wp_query_args, $query_vars, $this );
+		return apply_filters( 'artworker_artwork_data_store_cpt_get_artworks_query', $wp_query_args, $query_vars, $this );
 	}
 
 

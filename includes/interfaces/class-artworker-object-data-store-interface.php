@@ -3,7 +3,7 @@
 /**
  * The Artworker Object Data Store Interface
  *
- * @link       https://github.com/JoshuaMcKendall/artworker/tree/master/includes
+ * @link       https://github.com/JoshuaMcKendall/artworker/tree/master/includes/interfaces
  * @since      1.0.0
  *
  * @package    Artworker

@@ -1,33 +1,35 @@
 <?php
 /**
- * Abstract Data.
+ * Artworker Abstract Data Class
  *
+ * @link       https://github.com/JoshuaMcKendall/artworker/includes/
+ * @since      1.0.0
+ *
+ * @package    Artworker
+ * @subpackage Artworker/includes
+ */
+
+/**
  * Handles generic data interaction which is implemented by
  * the different data store classes.
  *
- * @class       Artworker_Data
- * @version     1.0.0
- * @package     WooCommerce/Classes
+ * @since      1.0.0
+ * @package    Artworker
+ * @subpackage Artworker/includes
+ * @author     Joshua McKendall <artworker@joshuamckendall.com>
  */
-
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
 
 /**
- * Abstract Artworker Data Class
- *
- * Implemented by classes using the same CRUD(s) pattern.
- *
- * @version  2.6.0
- * @package  WooCommerce/Abstracts
+ * Prevent loading this file directly
  */
+defined( 'ABSPATH' ) || exit;
+
 abstract class Artworker_Data {
 
 	/**
 	 * ID for this object.
 	 *
-	 * @since 3.0.0
+	 * @since 1.0.0
 	 * @var int
 	 */
 	protected $id = 0;
@@ -35,7 +37,7 @@ abstract class Artworker_Data {
 	/**
 	 * Core data for this object. Name value pairs (name + default value).
 	 *
-	 * @since 3.0.0
+	 * @since 1.0.0
 	 * @var array
 	 */
 	protected $data = array();
@@ -43,7 +45,7 @@ abstract class Artworker_Data {
 	/**
 	 * Core data changes for this object.
 	 *
-	 * @since 3.0.0
+	 * @since 1.0.0
 	 * @var array
 	 */
 	protected $changes = array();
@@ -51,7 +53,7 @@ abstract class Artworker_Data {
 	/**
 	 * This is false until the object is read from the DB.
 	 *
-	 * @since 3.0.0
+	 * @since 1.0.0
 	 * @var bool
 	 */
 	protected $object_read = false;
@@ -59,17 +61,17 @@ abstract class Artworker_Data {
 	/**
 	 * This is the name of this object type.
 	 *
-	 * @since 3.0.0
+	 * @since 1.0.0
 	 * @var string
 	 */
 	protected $object_type = 'data';
 
 	/**
 	 * Extra data for this object. Name value pairs (name + default value).
-	 * Used as a standard way for sub classes (like product types) to add
-	 * additional information to an inherited class.
+	 * Used as a standard way for sub classes to add additional information
+	 * to an inherited class.
 	 *
-	 * @since 3.0.0
+	 * @since 1.0.0
 	 * @var array
 	 */
 	protected $extra_data = array();
@@ -77,7 +79,7 @@ abstract class Artworker_Data {
 	/**
 	 * Set to _data on construct so we can track and reset data if needed.
 	 *
-	 * @since 3.0.0
+	 * @since 1.0.0
 	 * @var array
 	 */
 	protected $default_data = array();
@@ -85,7 +87,7 @@ abstract class Artworker_Data {
 	/**
 	 * Contains a reference to the data store for this class.
 	 *
-	 * @since 3.0.0
+	 * @since 1.0.0
 	 * @var object
 	 */
 	protected $data_store;
@@ -94,7 +96,7 @@ abstract class Artworker_Data {
 	 * Stores meta in cache for future reads.
 	 * A group must be set to to enable caching.
 	 *
-	 * @since 3.0.0
+	 * @since 1.0.0
 	 * @var string
 	 */
 	protected $cache_group = '';
@@ -102,7 +104,7 @@ abstract class Artworker_Data {
 	/**
 	 * Stores additional meta data.
 	 *
-	 * @since 3.0.0
+	 * @since 1.0.0
 	 * @var array
 	 */
 	protected $meta_data = null;
@@ -160,7 +162,7 @@ abstract class Artworker_Data {
 	/**
 	 * Get the data store.
 	 *
-	 * @since  3.0.0
+	 * @since  1.0.0
 	 * @return object
 	 */
 	public function get_data_store() {
@@ -170,7 +172,7 @@ abstract class Artworker_Data {
 	/**
 	 * Returns the unique ID for this object.
 	 *
-	 * @since  2.6.0
+	 * @since  1.0.0
 	 * @return int
 	 */
 	public function get_id() {
@@ -180,7 +182,7 @@ abstract class Artworker_Data {
 	/**
 	 * Delete an object, set the ID to 0, and return result.
 	 *
-	 * @since  2.6.0
+	 * @since  1.0.0
 	 * @param  bool $force_delete Should the date be deleted permanently.
 	 * @return bool result
 	 */
@@ -196,7 +198,7 @@ abstract class Artworker_Data {
 	/**
 	 * Save should create or update based on object existence.
 	 *
-	 * @since  2.6.0
+	 * @since  1.0.0
 	 * @return int
 	 */
 	public function save() {
@@ -232,7 +234,7 @@ abstract class Artworker_Data {
 	/**
 	 * Change data to JSON format.
 	 *
-	 * @since  2.6.0
+	 * @since  1.0.0
 	 * @return string Data in JSON format.
 	 */
 	public function __toString() {
@@ -242,7 +244,7 @@ abstract class Artworker_Data {
 	/**
 	 * Returns all data for this object.
 	 *
-	 * @since  2.6.0
+	 * @since  1.0.0
 	 * @return array
 	 */
 	public function get_data() {
@@ -252,7 +254,7 @@ abstract class Artworker_Data {
 	/**
 	 * Returns array of expected data keys for this object.
 	 *
-	 * @since   3.0.0
+	 * @since   1.0.0
 	 * @return array
 	 */
 	public function get_data_keys() {
@@ -260,9 +262,9 @@ abstract class Artworker_Data {
 	}
 
 	/**
-	 * Returns all "extra" data keys for an object (for sub objects like product types).
+	 * Returns all "extra" data keys for an object.
 	 *
-	 * @since  3.0.0
+	 * @since  1.0.0
 	 * @return array
 	 */
 	public function get_extra_data_keys() {
@@ -272,7 +274,7 @@ abstract class Artworker_Data {
 	/**
 	 * Filter null meta values from array.
 	 *
-	 * @since  3.0.0
+	 * @since  1.0.0
 	 * @param mixed $meta Meta value to check.
 	 * @return bool
 	 */
@@ -283,7 +285,7 @@ abstract class Artworker_Data {
 	/**
 	 * Get All Meta Data.
 	 *
-	 * @since 2.6.0
+	 * @since 1.0.0
 	 * @return array of objects.
 	 */
 	public function get_meta_data() {
@@ -319,7 +321,7 @@ abstract class Artworker_Data {
 	/**
 	 * Get Meta Data by Key.
 	 *
-	 * @since  2.6.0
+	 * @since  1.0.0
 	 * @param  string $key Meta Key.
 	 * @param  bool   $single return first found meta with key, or all with $key.
 	 * @param  string $context What the value is for. Valid values are view and edit.
@@ -358,7 +360,7 @@ abstract class Artworker_Data {
 	/**
 	 * See if meta data exists, since get_meta always returns a '' or array().
 	 *
-	 * @since  3.0.0
+	 * @since  1.0.0
 	 * @param  string $key Meta Key.
 	 * @return boolean
 	 */
@@ -371,7 +373,7 @@ abstract class Artworker_Data {
 	/**
 	 * Set all meta data from array.
 	 *
-	 * @since 2.6.0
+	 * @since 1.0.0
 	 * @param array $data Key/Value pairs.
 	 */
 	public function set_meta_data( $data ) {
@@ -395,7 +397,7 @@ abstract class Artworker_Data {
 	/**
 	 * Add meta data.
 	 *
-	 * @since 2.6.0
+	 * @since 1.0.0
 	 *
 	 * @param string       $key Meta key.
 	 * @param string|array $value Meta value.
@@ -425,7 +427,7 @@ abstract class Artworker_Data {
 	/**
 	 * Update meta data by key or ID, if provided.
 	 *
-	 * @since  2.6.0
+	 * @since  1.0.0
 	 *
 	 * @param  string       $key Meta key.
 	 * @param  string|array $value Meta value.
@@ -477,7 +479,7 @@ abstract class Artworker_Data {
 	/**
 	 * Delete meta data.
 	 *
-	 * @since 2.6.0
+	 * @since 1.0.0
 	 * @param string $key Meta key.
 	 */
 	public function delete_meta_data( $key ) {
@@ -494,7 +496,7 @@ abstract class Artworker_Data {
 	/**
 	 * Delete meta data.
 	 *
-	 * @since 2.6.0
+	 * @since 1.0.0
 	 * @param int $mid Meta ID.
 	 */
 	public function delete_meta_data_by_mid( $mid ) {
@@ -511,7 +513,7 @@ abstract class Artworker_Data {
 	/**
 	 * Read meta data if null.
 	 *
-	 * @since 3.0.0
+	 * @since 1.0.0
 	 */
 	protected function maybe_read_meta_data() {
 		if ( is_null( $this->meta_data ) ) {
@@ -523,7 +525,7 @@ abstract class Artworker_Data {
 	 * Read Meta Data from the database. Ignore any internal properties.
 	 * Uses it's own caches because get_metadata does not provide meta_ids.
 	 *
-	 * @since 2.6.0
+	 * @since 1.0.0
 	 * @param bool $force_read True to force a new DB read (and update cache).
 	 */
 	public function read_meta_data( $force_read = false ) {
@@ -571,7 +573,7 @@ abstract class Artworker_Data {
 	/**
 	 * Update Meta Data in the database.
 	 *
-	 * @since 2.6.0
+	 * @since 1.0.0
 	 */
 	public function save_meta_data() {
 		if ( ! $this->data_store || is_null( $this->meta_data ) ) {
@@ -602,7 +604,7 @@ abstract class Artworker_Data {
 	/**
 	 * Set ID.
 	 *
-	 * @since 3.0.0
+	 * @since 1.0.0
 	 * @param int $id ID.
 	 */
 	public function set_id( $id ) {
@@ -612,7 +614,7 @@ abstract class Artworker_Data {
 	/**
 	 * Set all props to default values.
 	 *
-	 * @since 3.0.0
+	 * @since 1.0.0
 	 */
 	public function set_defaults() {
 		$this->data    = $this->default_data;
@@ -684,7 +686,7 @@ abstract class Artworker_Data {
 	 * This stores changes in a special array so we can track what needs saving
 	 * the the DB later.
 	 *
-	 * @since 3.0.0
+	 * @since 1.0.0
 	 * @param string $prop Name of prop to set.
 	 * @param mixed  $value Value of the prop.
 	 */
@@ -703,7 +705,7 @@ abstract class Artworker_Data {
 	/**
 	 * Return data changes only.
 	 *
-	 * @since 3.0.0
+	 * @since 1.0.0
 	 * @return array
 	 */
 	public function get_changes() {
@@ -713,7 +715,7 @@ abstract class Artworker_Data {
 	/**
 	 * Merge changes with data and clear.
 	 *
-	 * @since 3.0.0
+	 * @since 1.0.0
 	 */
 	public function apply_changes() {
 		$this->data    = array_replace_recursive( $this->data, $this->changes ); // @codingStandardsIgnoreLine
@@ -736,7 +738,7 @@ abstract class Artworker_Data {
 	 * Gets the value from either current pending changes, or the data itself.
 	 * Context controls what happens to the value before it's returned.
 	 *
-	 * @since  3.0.0
+	 * @since  1.0.0
 	 * @param  string $prop Name of prop to get.
 	 * @param  string $context What the value is for. Valid values are view and edit.
 	 * @return mixed
@@ -758,7 +760,7 @@ abstract class Artworker_Data {
 	/**
 	 * Sets a date prop whilst handling formatting and datetime objects.
 	 *
-	 * @since 3.0.0
+	 * @since 1.0.0
 	 * @param string         $prop Name of prop to set.
 	 * @param string|integer $value Value of the prop.
 	 */
