@@ -1,3 +1,3 @@
 # Artworker
 
-:art: A plugin that adds an art gallery and art post type to WordPress.
+:art: A WordPress plugin for displaying artwork. Artworker adds custom post types, taxonomies, and custom Gutenberg blocks that enable you to turn your site into a beautiful art gallery.
