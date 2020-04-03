@@ -85,6 +85,7 @@ class Artworker_Post_Types {
 			'has_archive'        => $has_archive,//$has_archive,
 			'hierarchical'       => false,
 			'menu_position'      => 4,
+			'menu_icon' 		 => 'dashicons-art',
 			'supports'           => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'comments', 'custom-fields' ),
 			'show_in_rest'       => true,
 			'show_in_nav_menus'  => true,
