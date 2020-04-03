@@ -1,0 +1,61 @@
+{
+	"name": "artworker/artwork-block",
+	"category": "common",
+	"attributes": {
+		"id": {
+			"type": "number"
+		},
+		"align": {
+			"type": "string",
+			"default" : ""
+		},
+		"url": {
+			"type": "string",
+			"selector": "img"
+		},
+		"alt": {
+			"type": "string",
+			"default": ""
+		},
+		"caption": {
+			"type": "string"
+		},
+		"title": {
+			"type": "string"
+		},
+		"href": {
+			"type": "string"
+		},
+		"rel": {
+			"type": "string"
+		},
+		"linkClass": {
+			"type": "string"
+		},
+		"width": {
+			"type": "number"
+		},
+		"height": {
+			"type": "number"
+		},
+		"sizeSlug": {
+			"type": "string"
+		},
+		"linkDestination": {
+			"type": "string",
+			"default": "none"
+		},
+		"linkTarget": {
+			"type": "string"
+		},
+		"focalPoint": {
+			"type": "object"
+		},
+		"data": {
+			"default": "",
+			"type": "string",
+			"source": "meta",
+			"meta": "artworker/artwork-data"
+		}
+	}
+}
