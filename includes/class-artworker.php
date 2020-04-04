@@ -129,7 +129,7 @@ final class Artworker {
 	 * @since 1.0.0
 	 */
 	public function on_plugins_loaded() {
-		
+		do_action( 'artworker_loaded' );		
 	}
 
 	/**
