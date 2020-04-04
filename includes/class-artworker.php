@@ -77,14 +77,6 @@ final class Artworker {
 	public $artwork_factory = null;
 
 	/**
-	 * Artworker Gallery instance.
-	 *
-	 * @var Artworker_Art_Gallery
-	 * @since 1.0.0
-	 */
-	public $gallery = null;
-
-	/**
 	 * Main Artworker Instance.
 	 *
 	 * Ensures only one instance of Artworker is loaded or can be loaded.
