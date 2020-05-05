@@ -402,7 +402,7 @@ class Artworker_Query {
 		$artwork_post_type = 'artwork';
 
 		if( $post_type !== $artwork_post_type ) 
-			return $title;
+			return $post_type_name;
 
 		$gallery_page_id = artworker_get_page_id( 'gallery' );
 		$gallery_page = get_post( $gallery_page_id );

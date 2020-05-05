@@ -27,8 +27,8 @@
     }
 
     function makeGrid(grid, items, o, noresize){
-        var x, new_w, ratio = 1, rows = 1, max_w = grid.width(), row = [], row_width = 0, row_h = o.rowHeight;
-        if (!max_w) max_w = grid.width(); // IE < 8 bug
+        var x, new_w, ratio = 1, rows = 1, max_w = grid.width()-2, row = [], row_width = 0, row_h = o.rowHeight;
+        if (!max_w) max_w = grid.width()-2; // IE < 8 bug
 
         // define inside makeGrid to access variables in scope
         function _helper(lastRow){

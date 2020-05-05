@@ -453,29 +453,31 @@
 
 			getRowHeight	: function () {
 
-				var $winWidth = $window.width(),
+				var $galleryWidth = $gallery.width(),
 					rowHeight = 'xs';
 
+					console.log( $galleryWidth );
 
-				if( $winWidth > 510 && $winWidth < 750 ) {
+
+				if( $galleryWidth > 510 && $galleryWidth < 750 ) {
 
 					rowHeight = 'sm';
 
 				}
 
-				if( $winWidth > 750 && $winWidth < 1170 ) {
+				if( $galleryWidth > 750 && $galleryWidth < 1170 ) {
 
 					rowHeight = 'md';
 
 				}
 
-				if( $winWidth > 1170 && $winWidth < 1590 ) {
+				if( $galleryWidth > 1170 && $galleryWidth < 1590 ) {
 
 					rowHeight = 'lg';
 
 				}
 
-				if( $winWidth > 1590 ) {
+				if( $galleryWidth > 1590 ) {
 
 					rowHeight = 'xl';
 

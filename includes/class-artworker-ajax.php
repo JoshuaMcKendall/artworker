@@ -130,7 +130,7 @@ class Artworker_Ajax {
 
 		wp_send_json( $json );
 
-		wp_die();
+		die();
 
 	}
 

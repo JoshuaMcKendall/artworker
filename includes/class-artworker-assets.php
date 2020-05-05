@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Fired during plugin activation
+ * The Artworker Assets class.
  *
  * @link       https://github.com/JoshuaMcKendall/artworker/tree/master/includes
  * @since      1.0.0
@@ -11,9 +11,9 @@
  */
 
 /**
- * Fired during plugin activation.
+ * The Artworker Assets class.
  *
- * This class defines all code necessary to run during the plugin's activation.
+ * This class the means to load assets for artworker.
  *
  * @since      1.0.0
  * @package    Artworker
