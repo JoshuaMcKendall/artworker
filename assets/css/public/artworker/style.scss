@@ -1,8 +1,12 @@
 @import "variables";
 @import "main";
-@import "pwsp-default-skin";
+@import "justifiedGallery";
 
 .artworker {
+
+  .artworker-artwork-archive-page {
+    margin-bottom: 3em;
+  }
 
   .artwork-loadmore {
 
@@ -57,7 +61,7 @@
 				border: 0px solid transparent; 
 				box-sizing: content-box; 
 				overflow: hidden; 
-				position: relative;
+				// position: relative;
 
 				img {
 					display: block; 
@@ -137,7 +141,7 @@
 				}
 			}
 
-			&.flex-images {
+			&.artworker-artwork-gallery {
 
 				.item { display: none;  }
 
