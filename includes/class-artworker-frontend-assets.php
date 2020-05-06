@@ -46,7 +46,7 @@ class Artworker_Frontend_Assets extends Artworker_Assets {
 					'src'		=> ARTWORKER_ASSET_URI . 'js/public/jquery.unveil'. $suffix .'.js',
 					'deps'		=> array( 'jquery' ),
 					'version'	=> '1.0.0',
-					'in_footer'	=> false,
+					'in_footer'	=> true,
 					'register'	=> true
 				),
 				'jquery-flex-images'	=> array(
@@ -54,15 +54,31 @@ class Artworker_Frontend_Assets extends Artworker_Assets {
 					'src'		=> ARTWORKER_ASSET_URI . 'js/public/jquery.flex-images'. $suffix .'.js',
 					'deps'		=> array( 'jquery', 'jquery-unveil' ),
 					'version'	=> '1.0.4',
-					'in_footer'	=> false,
+					'in_footer'	=> true,
+					'register'	=> false
+				),
+				'jquery-justified-gallery'	=> array(
+
+					'src'		=> ARTWORKER_ASSET_URI . 'js/public/jquery.justifiedGallery'. $suffix .'.js',
+					'deps'		=> array( 'jquery', 'jquery-unveil' ),
+					'version'	=> '3.7.0',
+					'in_footer'	=> true,
 					'register'	=> true
+				),
+				'jquery-mosaic'	=> array(
+
+					'src'		=> ARTWORKER_ASSET_URI . 'js/public/jquery.mosaic'. $suffix .'.js',
+					'deps'		=> array( 'jquery', 'jquery-unveil' ),
+					'version'	=> '0.15.3',
+					'in_footer'	=> true,
+					'register'	=> false
 				),
 				'photoswipe'                 => array(
 
 					'src'     => ARTWORKER_ASSET_URI . 'js/public/photoswipe' . $suffix . '.js',
 					'deps'    => array(),
 					'version' => '4.1.3',
-					'in_footer'	=> false,
+					'in_footer'	=> true,
 					'register'	=> true
 				),
 				'photoswipe-ui-default'      => array(
@@ -76,9 +92,9 @@ class Artworker_Frontend_Assets extends Artworker_Assets {
 				'artworker'	=> array(
 
 					'src'		=> ARTWORKER_ASSET_URI . 'js/public/artworker'. $suffix .'.js',
-					'deps'		=> array( 'jquery-unveil', 'photoswipe', 'jquery-flex-images' ),
+					'deps'		=> array( 'jquery-unveil', 'photoswipe', 'jquery-justified-gallery' ),
 					'version'	=> ARTWORKER_VERSION,
-					'in_footer'	=> false,
+					'in_footer'	=> true,
 					'register'	=> true
 				),
 			)
