@@ -26,7 +26,7 @@ $size = 'large';
 
 ?>
 
-<div id="<?php esc_attr_e( 'artwork-' . $artwork_id ); ?>" class="item artwork" data-w="<?php esc_attr_e( $artwork->get_width( $size ) ); ?>" data-h="<?php esc_attr_e( $artwork->get_height( $size ) ); ?>" data-artwork="<?php esc_attr_e( $artwork->get_data( 'json' ) ); ?>">
+<div id="<?php esc_attr_e( 'artwork-' . $artwork_id ); ?>" class="item artwork" style="width: <?php esc_attr_e( $artwork->get_width( $size ) ); ?>; height: <?php esc_attr_e( $artwork->get_height( $size ) ); ?>;" data-w="<?php esc_attr_e( $artwork->get_width( $size ) ); ?>" data-h="<?php esc_attr_e( $artwork->get_height( $size ) ); ?>" data-artwork="<?php esc_attr_e( $artwork->get_data( 'json' ) ); ?>">
 
 	<?php do_action( 'artworker_before_gallery_thumb', $artwork_id ); ?>
 
