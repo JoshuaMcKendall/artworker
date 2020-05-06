@@ -4,8 +4,9 @@
 		$window				= $( window ),
 		$body				= $( 'body' ),
 		$gallery 			= $( '#artwork-gallery' ),
+		$justifiedGallery	= null,
 		$artwork    		= $( '.artworker .artworker-artwork-gallery .artwork:not(.noscript)' ),
-		$lazy				= $( '.lazy' ),
+		$lazy				= $artwork.find( '.artwork-image.lazy' ),
 		$pagination			= $( '.artworker .artworker-pagination' ),
 		$loadmore 			= $( '.artworker .artwork-loadmore' ),
 		$pswp 				= $( '.pswp' )[0],
@@ -212,21 +213,15 @@
 
 			utils 			: Utils,
 			galleryItems 	: [],
+			galleryOptions	: { rowHeight: 350, margins: 0, border: 0, selector: '.artwork.item', imgSelector: ' > .artwork-link > .artwork-image' },
 			currentPage		: 1,
 			totalPages		: 1,
 			postsPerPage	: parseInt( Artworker_Data.posts_per_page, 10 ),
 			defaultImage	: Artworker_Data.default_image,
 			loadedPages		: [],
 			rowHeight 		: 300,
-			rowHeights 		: {
-
-				'xs'	: 300,
-				'sm'	: 500,
-				'md'	: 550,
-				'lg'	: 600,
-				'xl'	: 650
-
-			},
+			timeout 		: false,
+			delay 			: 300,
 
 			setTotalPages : function () {
 
@@ -351,7 +346,8 @@
 			initializeGallery : function () {
 
 				Artworker.galleryItems = Artworker.getGalleryItems();
-				$gallery.flexImages( { rowHeight: Artworker.rowHeight } );
+				Artworker.galleryOptions.rowHeight = Artworker.getRowHeight();
+				$justifiedGallery = $gallery.justifiedGallery( Artworker.galleryOptions );
 				Artworker.unhideLoadmoreButton();
 				Artworker.setTotalPages();
 
@@ -375,12 +371,12 @@
 					if( status == 'success' ) {
 						$gallery.append( html );
 						Artworker.galleryItems = Artworker.getGalleryItems();
-						$gallery.flexImages( { rowHeight: Artworker.rowHeight } );
 						Artworker.setCurrentPage( data['paged'] );	
-						$gallery.trigger('artworker:artworkGotten', [response, data] );				
+						$gallery.trigger('artworker:artworkLoaded', [response, data] );
+						$gallery.justifiedGallery( 'norewind' );				
 					}
 
-					$gallery.trigger( 'artworker:noArtworkGotten', [response, data] );
+					$gallery.trigger( 'artworker:noArtworkLoaded', [response, data] );
 
 				} );
 
@@ -453,44 +449,27 @@
 
 			getRowHeight	: function () {
 
-				var $galleryWidth = $gallery.width(),
-					rowHeight = 'xs';
-
-					console.log( $galleryWidth );
-
-
-				if( $galleryWidth > 510 && $galleryWidth < 750 ) {
-
-					rowHeight = 'sm';
-
-				}
-
-				if( $galleryWidth > 750 && $galleryWidth < 1170 ) {
-
-					rowHeight = 'md';
-
-				}
-
-				if( $galleryWidth > 1170 && $galleryWidth < 1590 ) {
-
-					rowHeight = 'lg';
-
-				}
-
-				if( $galleryWidth > 1590 ) {
-
-					rowHeight = 'xl';
-
-				}
-
-				return rowHeight;
+				return Artworker.rowHeight;
 
 			},
 
 			setRowHeight : function () {
 
-				Artworker.rowHeight = Artworker.rowHeights[ Artworker.getRowHeight( $window ) ];
-				$gallery.flexImages( { rowHeight: Artworker.rowHeight } );
+				var $galleryWidth = $gallery.width(),
+					$windowWidth = $window.width(),
+					percentage = 0.33;
+
+				Artworker.rowHeight = $galleryWidth * percentage;
+				Artworker.galleryOptions.rowHeight = Artworker.rowHeight;
+
+				$gallery.justifiedGallery( Artworker.galleryOptions );
+
+			},
+
+			maybeSetRowHeight : function ( e ) {
+
+				clearTimeout( Artworker.timeout );
+  				Artworker.timeout = setTimeout( Artworker.setRowHeight, Artworker.delay );
 
 			},
 
@@ -575,12 +554,16 @@
 								newGalleryItemsLength = newGalleryItems.length,
 								startingIndex = gallery.items.length - newGalleryItemsLength;
 
+							console.log( 'Status: ', status );
+							console.log( 'Data: ', data );
+							console.log( 'Response: ', response );
 
 							if( status == 'success' ) {
 								$gallery.append( html );
 								Artworker.setCurrentPage( data.paged );
 								Artworker.galleryItems = $.merge( gallery.items, newGalleryItems );
-								$gallery.flexImages({ rowHeight: Artworker.rowHeights[ rowHeight ] });
+								Artworker.lazyLoad();
+								$gallery.justifiedGallery( 'norewind' );
 							}
 
 							if( index <= artworkCount && index >= lastThree ) {
@@ -690,24 +673,37 @@
 
 			},
 
+			setLazyImages: function () {
+
+
+
+			},
+
+			lazyLoad: function () {
+
+				$( '.artworker .artworker-artwork-gallery .artwork:not(.noscript) .lazy' ).unveil( 3000, function() {
+					$( this ).css( { opacity: 1 } );
+				} );			
+
+			},
+
 			init : function () {
 
 				$body.addClass( 'js-loading' );				
 				$lazy.addClass('loaded');
 
-				$lazy.unveil( 3000, function() {
-					$( this ).css( { opacity: 1 } );
-				} );
+				Artworker.lazyLoad();
 
 				$artwork.on( 'click', '.artwork-block-image', Artworker.openArtwork );
 				$gallery.on( 'click', '.artwork a', Artworker.openGalleryArtwork );
 				$loadmore.on( 'click', Artworker.loadMoreArtwork );
-				$window.on( 'resize', Artworker.setRowHeight );
+				$window.on( 'resize', Artworker.maybeSetRowHeight );
 				$window.on( 'load', Artworker.setRowHeight );
 				$window.on( 'load', Artworker.playAnimations );
 				$window.on( 'load', Artworker.initializeGallery );
 
 				$gallery.on( 'artworker:getArtworksAlways', Artworker.maybeHideLoadmoreButton );
+				$gallery.on( 'artworker:artworkLoaded', Artworker.lazyLoad );
 				
 
 			},
