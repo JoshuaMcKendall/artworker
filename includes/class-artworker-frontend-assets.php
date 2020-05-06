@@ -49,14 +49,6 @@ class Artworker_Frontend_Assets extends Artworker_Assets {
 					'in_footer'	=> true,
 					'register'	=> true
 				),
-				'jquery-flex-images'	=> array(
-
-					'src'		=> ARTWORKER_ASSET_URI . 'js/public/jquery.flex-images'. $suffix .'.js',
-					'deps'		=> array( 'jquery', 'jquery-unveil' ),
-					'version'	=> '1.0.4',
-					'in_footer'	=> true,
-					'register'	=> false
-				),
 				'jquery-justified-gallery'	=> array(
 
 					'src'		=> ARTWORKER_ASSET_URI . 'js/public/jquery.justifiedGallery'. $suffix .'.js',
@@ -64,14 +56,6 @@ class Artworker_Frontend_Assets extends Artworker_Assets {
 					'version'	=> '3.7.0',
 					'in_footer'	=> true,
 					'register'	=> true
-				),
-				'jquery-mosaic'	=> array(
-
-					'src'		=> ARTWORKER_ASSET_URI . 'js/public/jquery.mosaic'. $suffix .'.js',
-					'deps'		=> array( 'jquery', 'jquery-unveil' ),
-					'version'	=> '0.15.3',
-					'in_footer'	=> true,
-					'register'	=> false
 				),
 				'photoswipe'                 => array(
 
