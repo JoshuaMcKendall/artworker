@@ -16,4 +16,4 @@ defined( 'ABSPATH' ) || exit();
 
 ?>
 
-<div id="artwork-gallery" class="artworker-artwork-gallery columns-<?php esc_attr_e( artworker_get_loop_prop( 'columns' ) ); ?> grid flex-images alignfull">
+<div id="artwork-gallery" class="artworker-artwork-gallery columns-<?php esc_attr_e( artworker_get_loop_prop( 'columns' ) ); ?> grid alignfull">
