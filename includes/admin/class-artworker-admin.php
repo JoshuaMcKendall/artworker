@@ -49,6 +49,7 @@ class Artworker_Admin {
 		add_filter( 'manage_artwork_posts_columns', array( $this, 'set_artwork_image_column' ) );
 		add_action( 'manage_artwork_posts_custom_column' , array( $this, 'render_artwork_column' ), 10, 2 );
 		add_action( 'admin_head', array( $this, 'style_artwork_column' ) );
+		add_action( 'delete_attachment', array( $this, 'switch_artwork_post_to_draft' ), 10, 1 );
 
 		add_filter( 'display_post_states', array( $this, 'artworker_add_custom_post_states' ) );
 
@@ -146,6 +147,33 @@ class Artworker_Admin {
 	    }
 
 	    return $states;
+	}
+
+	public function switch_artwork_post_to_draft( $post_id ) {
+
+		global $wpdb;
+
+	    $sql = "SELECT {$wpdb->posts}.ID 
+	        FROM {$wpdb->posts} 
+	        INNER JOIN {$wpdb->postmeta} 
+	        ON ({$wpdb->posts}.ID = {$wpdb->postmeta}.post_id) 
+	        WHERE {$wpdb->posts}.post_type = 'artwork'
+	        AND (({$wpdb->posts}.post_status = 'publish')) 
+	        AND ( ({$wpdb->postmeta}.meta_key = '_thumbnail_id' 
+	            AND CAST({$wpdb->postmeta}.meta_value AS CHAR) = '%d') 
+	        ) 
+	        GROUP BY {$wpdb->posts}.ID";
+
+	    $prepared_sql = $wpdb->prepare( $sql, $post_id );
+
+	    $artwork_post_ids  = $wpdb->get_results( $prepared_sql );
+
+	    foreach ( $artwork_post_ids as $key => $artwork_post ) {
+
+			wp_update_post( array( 'ID' =>  $artwork_post->ID, 'post_status' => 'draft' ) );
+	    	
+	    }
+
 	}
 
 
