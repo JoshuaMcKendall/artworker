@@ -136,8 +136,6 @@ class Artworker_Artwork {
 		$artwork_image_id = get_post_thumbnail_id( $this->id );
 		$artwork_data = wp_get_attachment_image_src( $artwork_image_id, 'full' );
 
-		error_log(json_encode($artwork_data));
-
 		$this->set_data( $artwork_data );
 		$this->set_artwork_id( $artwork_image_id );
 		$this->set_src( $this->data[0] );
