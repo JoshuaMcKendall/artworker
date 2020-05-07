@@ -454,7 +454,7 @@ if ( ! function_exists( 'artworker_print_notice' ) ) {
  
 }
 
-if( ! function_exists('artworker_get_gallery_items') ) {
+if( ! function_exists('artworker_get_gallery_json_items') ) {
 
 	function artworker_get_gallery_json_items( $query ) {
 
