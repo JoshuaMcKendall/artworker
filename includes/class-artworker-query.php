@@ -236,6 +236,19 @@ class Artworker_Query {
 			return;
 		}
 
+		if( $q->is_main_query() && ! is_admin() && $q->get('post_type') == 'artwork' ) {
+
+			$meta_query = array(
+				array(
+					'key' 		=> '_thumbnail_id',
+					'compare' 	=> 'EXISTS'
+				)
+			);
+
+			$q->set( 'meta_query', $meta_query );
+
+		}
+
 		$this->artwork_query( $q );
 	}
 
