@@ -133,12 +133,17 @@ class Artworker_Artwork {
 			$this->set_id( absint( $artwork->ID ) );
 		}
 
-		$this->set_data( get_post_meta( $this->id, 'artworker/artwork-data', true ) );
-		$this->set_src( $this->data['src'] );
-		$this->set_artwork_id( $this->data['id'] );
-		$this->set_sizes( $this->data['sizes'] );
-		$this->set_height( $this->data['height'] );
-		$this->set_width( $this->data['width'] );
+		$artwork_image_id = get_post_thumbnail_id( $this->id );
+		$artwork_data = wp_get_attachment_image_src( $artwork_image_id, 'full' );
+
+		error_log(json_encode($artwork_data));
+
+		$this->set_data( $artwork_data );
+		$this->set_artwork_id( $artwork_image_id );
+		$this->set_src( $this->data[0] );
+		$this->set_width( $this->data[1] );
+		$this->set_height( $this->data[2] );
+		
 
 	}
 
@@ -168,8 +173,8 @@ class Artworker_Artwork {
 	 * @since 1.0.0
 	 * @param string $data.
 	 */
-	public function set_data( $data = '', $assoc = true ) {
-		$this->data = json_decode( $data, $assoc );
+	public function set_data( $data = array() ) {
+		$this->data = $data;
 	}
 
 	/**
