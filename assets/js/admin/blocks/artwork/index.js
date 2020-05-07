@@ -8,7 +8,7 @@ const { name, category, attributes } = metadata;
 
 registerBlockType( name, {   
   title: __( 'Artwork', 'artworker' ),
-  icon: 'heart',
+  icon: 'art',
   category: category,
   keywords: [ __( 'artwork' ), __( 'image' ), __( 'pics' ) ],
   supports: {
