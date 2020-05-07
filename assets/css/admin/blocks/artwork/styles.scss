@@ -5,6 +5,10 @@
 	margin-left: 0;
 	margin-right: 0;
 
+	img {
+		width: 100%;
+	}
+
 	&.is-transient img {
 		opacity: 0.3;
 	}
