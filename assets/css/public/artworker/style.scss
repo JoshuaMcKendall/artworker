@@ -71,9 +71,9 @@
 				}
 			}
 
-			&.flex-images {
+			&.artworker-artwork-gallery {
 
-				.item { display: none;  }
+				.item { width: 0; /* This is overriden by inline styles by js */ }
 
 			}
 
