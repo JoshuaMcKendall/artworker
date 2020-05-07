@@ -66,7 +66,32 @@ class Artworker_Admin {
 		echo '<style type="text/css">';
 		echo '.wp-list-table .column-artwork {
 			  	width: 100px;
-			  }';
+			  }
+			  a.artwork.artwork-image {
+				display: block;
+			    position: relative;
+			    z-index: 999;
+			    background: #eee;
+			    width: 90px;
+			    height: 90px;
+			  }
+			  a.artwork.artwork-image::before {
+			    font-family: "dashicons";
+			    content: "\f309";
+			    display: inline-flex;
+			    width: 90px;
+			    height: 90px;
+			    top: 0;
+			    left: 0;
+			    position: absolute;
+			    z-index: -99;
+			    text-align: center;
+			    justify-content: center;
+			    align-items: center;
+			    color: #ccc;
+			    font-size: 30px;
+			  }
+			  ';
 		echo '</style>';		
 	}
 
@@ -91,14 +116,18 @@ class Artworker_Admin {
 		if( $column != 'artwork' )
 			return $column;
 
-		$artwork_data = json_decode( get_post_meta( $post_id , 'artworker/artwork-data' , true ), true );
-		$artwork = '-';
+		$artwork_image_id = get_post_thumbnail_id( $post_id );
+		$artwork_data = wp_get_attachment_image_src( $artwork_image_id, 'thumbnail' );
+		$artwork = artworker_get_default_image();
+		$classes = 'artwork artwork-image';
 
 
-		if( array_key_exists( 'id', $artwork_data ) )
-			$artwork = wp_get_attachment_image_src( absint( $artwork_data['id'] ) );
+		if( $artwork_data )
+			$artwork = $artwork_data[0];
 
-		echo '<a href="'. esc_url( get_edit_post_link( $post_id ) ) .'" ><img src="'. esc_url( $artwork[0] ) .'" alt="Art thumbnail" title="" width="90" height="90" /></a>';
+		$image = '<img src="'. esc_url( $artwork ) .'" alt="Art thumbnail" title="" width="90" height="90" />';
+
+		echo '<a href="'. esc_url( get_edit_post_link( $post_id ) ) .'" class="'. esc_attr( $classes ) .'" >' . $image . '</a>';
 
 	}
 
