@@ -220,8 +220,8 @@
 			defaultImage	: Artworker_Data.default_image,
 			loadedPages		: [],
 			rowHeight 		: 300,
-			timeout 		: false,
-			delay 			: 300,
+			resizeTimeout 	: false,
+			resizeDelay 	: 300,
 
 			setTotalPages : function () {
 
@@ -347,9 +347,19 @@
 
 				Artworker.galleryItems = Artworker.getGalleryItems();
 				Artworker.galleryOptions.rowHeight = Artworker.getRowHeight();
-				$justifiedGallery = $gallery.justifiedGallery( Artworker.galleryOptions );
+
+				if( Utils.is_null( $justifiedGallery ) )
+					$justifiedGallery = $gallery.justifiedGallery( Artworker.galleryOptions );
+
 				Artworker.unhideLoadmoreButton();
 				Artworker.setTotalPages();
+
+			},
+
+			rewindGallery : function ( forceRewind = false ) {
+
+				if( Utils.is_null( $justifiedGallery ) || forceRewind )
+					$justifiedGallery = $gallery.justifiedGallery( Artworker.galleryOptions );
 
 			},
 
@@ -453,7 +463,7 @@
 
 			},
 
-			setRowHeight : function () {
+			setRowHeight : function ( rewindGallery = true ) {
 
 				var $galleryWidth = $gallery.width(),
 					$windowWidth = $window.width(),
@@ -461,15 +471,14 @@
 
 				Artworker.rowHeight = $galleryWidth * percentage;
 				Artworker.galleryOptions.rowHeight = Artworker.rowHeight;
-
-				$gallery.justifiedGallery( Artworker.galleryOptions );
+				Artworker.rewindGallery( rewindGallery );
 
 			},
 
 			maybeSetRowHeight : function ( e ) {
 
-				clearTimeout( Artworker.timeout );
-  				Artworker.timeout = setTimeout( Artworker.setRowHeight, Artworker.delay );
+				clearTimeout( Artworker.resizeTimeout );
+  				Artworker.resizeTimeout = setTimeout( Artworker.setRowHeight, Artworker.resizeDelay );
 
 			},
 
@@ -524,11 +533,11 @@
 
 				};
 
-				var gallery = new PhotoSwipe( $pswp, PhotoSwipeUI_Default, items, options );
+				var pswp = new PhotoSwipe( $pswp, PhotoSwipeUI_Default, items, options );
 
-				gallery.listen('afterChange', function() {
+				pswp.listen('afterChange', function() {
 
-					var index = parseInt( gallery.getCurrentIndex(), 10 ) + 1,
+					var index = parseInt( pswp.getCurrentIndex(), 10 ) + 1,
 						artworkCount = Artworker.galleryItems.length,
 						lastThree = ( artworkCount >= 3 ) ? artworkCount - 3 : artworkCount,
 						loadMoreThreshold = Math.ceil( artworkCount * ( 3 / 7 ) );
@@ -542,7 +551,7 @@
 
 						};
 
-						gallery.shout( 'getArtwork', data );
+						pswp.shout( 'getArtwork', data );
 
 						Artworker.getArtworks( data, function( response, data ) {
 
@@ -552,7 +561,7 @@
 								rowHeight = Artworker.getRowHeight( $window ),
 								newGalleryItems = Artworker.getGalleryItems( { 'gallery' : $( '<div>' + html + '</div>' ) } ),
 								newGalleryItemsLength = newGalleryItems.length,
-								startingIndex = gallery.items.length - newGalleryItemsLength;
+								startingIndex = pswp.items.length - newGalleryItemsLength;
 
 							console.log( 'Status: ', status );
 							console.log( 'Data: ', data );
@@ -561,29 +570,29 @@
 							if( status == 'success' ) {
 								$gallery.append( html );
 								Artworker.setCurrentPage( data.paged );
-								Artworker.galleryItems = $.merge( gallery.items, newGalleryItems );
+								Artworker.galleryItems = $.merge( pswp.items, newGalleryItems );
 								Artworker.lazyLoad();
 								$gallery.justifiedGallery( 'norewind' );
 							}
 
 							if( index <= artworkCount && index >= lastThree ) {
 
-								gallery.invalidateCurrItems();
-								gallery.updateSize(true);
+								pswp.invalidateCurrItems();
+								pswp.updateSize(true);
 
 							}
 
-							gallery.ui.update();			
+							pswp.ui.update();			
 
 						});
 
 					}
 
-					Artworker.galleryItems = gallery.items;
+					Artworker.galleryItems = pswp.items;
 
 				} );
 
-				gallery.init();
+				pswp.init();
 
 			},
 
@@ -633,14 +642,14 @@
 
 					},
 
-					artwork = new PhotoSwipe( $pswp, PhotoSwipeUI_Default, pswpItem, options );
+					pswp = new PhotoSwipe( $pswp, PhotoSwipeUI_Default, pswpItem, options );
 
-				artwork.init();
+				pswp.init();
 
 			},
 
 			playAnimations : function () {
-				$( 'body' ).removeClass( 'js-loading' );
+				$( 'body' ).removeClass( 'artworker-js-loading' );
 			},
 
 			disableLoadmoreButton : function () {
@@ -673,12 +682,6 @@
 
 			},
 
-			setLazyImages: function () {
-
-
-
-			},
-
 			lazyLoad: function () {
 
 				$( '.artworker .artworker-artwork-gallery .artwork:not(.noscript) .lazy' ).unveil( 3000, function() {
@@ -689,7 +692,7 @@
 
 			init : function () {
 
-				$body.addClass( 'js-loading' );				
+				$body.addClass( 'artworker-js-loading' );				
 				$lazy.addClass('loaded');
 
 				Artworker.lazyLoad();
