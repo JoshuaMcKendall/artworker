@@ -1,11 +1,10 @@
 import classnames from 'classnames';
 
-
 const { MediaUpload, PlainText, InspectorControls, BlockControls } = wp.editor;
 const { RichText, BlockAlignmentToolbar, BlockIcon, InspectorAdvancedControls, MediaPlaceholder, MediaReplaceFlow, __experimentalImageURLInputUI, } = wp.blockEditor;
 const { registerBlockType } = wp.blocks;
 const { __ } = wp.i18n;
-const { assign, get, filter, map, last, omit, pick } = lodash;
+const { assign, get, filter, map, last, omit, pick, has } = lodash;
 const { addFilter } = wp.hooks;
 const { withNotices, TextareaControl, TextControl, Button, ToggleControl, Panel, PanelBody, PanelRow, withInstanceId, Spinner, Icon, ResizableBox, FocalPointPicker } = wp.components;
 const { createElement } = wp.element;
@@ -93,24 +92,24 @@ class Artwork extends Component {
         }
 
 
-        setAttributes({ data: data });
+  //       setAttributes({ data: data });
 
-		if ( isTemporaryImage( id, url ) ) {
-			const file = getBlobByURL( url );
+		// if ( isTemporaryImage( id, url ) ) {
+		// 	const file = getBlobByURL( url );
 
-			if ( file ) {
-				mediaUpload( {
-					filesList: [ file ],
-					onFileChange: ( [ image ] ) => {
-						this.onSelectImage( image );
-					},
-					allowedTypes: ALLOWED_MEDIA_TYPES,
-					onError: ( message ) => {
-						noticeOperations.createErrorNotice( message );
-					},
-				} );
-			}
-		}
+		// 	if ( file ) {
+		// 		mediaUpload( {
+		// 			filesList: [ file ],
+		// 			onFileChange: ( [ image ] ) => {
+		// 				this.onSelectImage( image );
+		// 			},
+		// 			allowedTypes: ALLOWED_MEDIA_TYPES,
+		// 			onError: ( message ) => {
+		// 				noticeOperations.createErrorNotice( message );
+		// 			},
+		// 		} );
+		// 	}
+		// }
     }
 
 	componentDidUpdate( prevProps ) {
@@ -215,44 +214,45 @@ class Artwork extends Component {
 
 		console.log( media );
 
-		if( media.id && media.id !== id ) {
-			additionalAttributes = { 
-				id: media.id,
-				data: JSON.stringify( {
+		// if ( media ) {
+		// 	const mediaSize = applyFilters(
+		// 		'editor.PostFeaturedImage.imageSize',
+		// 		'post-thumbnail',
+		// 		media.id,
+		// 		currentPostId
+		// 	);
+		// 	if ( has( media, [ 'media_details', 'sizes', mediaSize ] ) ) {
+		// 		// use mediaSize when available
+		// 		mediaWidth = media.media_details.sizes[ mediaSize ].width;
+		// 		mediaHeight = media.media_details.sizes[ mediaSize ].height;
+		// 		mediaSourceUrl = media.media_details.sizes[ mediaSize ].source_url;
+		// 	} else {
+		// 		// get fallbackMediaSize if mediaSize is not available
+		// 		const fallbackMediaSize = applyFilters(
+		// 			'editor.PostFeaturedImage.imageSize',
+		// 			'thumbnail',
+		// 			media.id,
+		// 			currentPostId
+		// 		);
+		// 		if (
+		// 			has( media, [ 'media_details', 'sizes', fallbackMediaSize ] )
+		// 		) {
+		// 			// use fallbackMediaSize when mediaSize is not available
+		// 			mediaWidth =
+		// 				media.media_details.sizes[ fallbackMediaSize ].width;
+		// 			mediaHeight =
+		// 				media.media_details.sizes[ fallbackMediaSize ].height;
+		// 			mediaSourceUrl =
+		// 				media.media_details.sizes[ fallbackMediaSize ].source_url;
+		// 		} else {
+		// 			// use full image size when mediaFallbackSize and mediaSize are not available
+		// 			mediaWidth = media.media_details.width;
+		// 			mediaHeight = media.media_details.height;
+		// 			mediaSourceUrl = media.source_url;
+		// 		}
+		// 	}
+		// }
 
-					id: media.id,
-					width: media.width,
-					height: media.height,
-					src: media.url,
-					sizes: {
-						thumbnail: media.sizes.thumbnail,
-						medium: media.sizes.medium,
-						large: media.sizes.large,
-						full: media.sizes.full
-					},
-					caption: this.props.caption,
-					title: this.props.title
-
-				} ) 
-			};
-		}
-
-		// Check if the image is linked to it's media.
-		if ( linkDestination === LINK_DESTINATION_MEDIA ) {
-			// Update the media link.
-			mediaAttributes.href = media.url;
-		}
-
-		// Check if the image is linked to the attachment page.
-		if ( linkDestination === LINK_DESTINATION_ATTACHMENT ) {
-			// Update the media link.
-			mediaAttributes.href = media.link;
-		}
-
-		this.props.setAttributes( {
-			...mediaAttributes,
-			...additionalAttributes,
-		} );
 	}
 
 	updateImage( sizeSlug ) {
@@ -337,9 +337,15 @@ class Artwork extends Component {
 			isRTL,
 			onResizeStart,
 			onResizeStop,
+			currentPostId,
+			featuredImageId,
+			onUpdateImage,
+			onDropImage,
+			onRemoveImage,
+			image,
+			postType,
 		} = this.props;
 		const {
-			url,
 			alt,
 			caption,
 			focalPoint,
@@ -356,11 +362,18 @@ class Artwork extends Component {
 			sizeSlug,
 		} = attributes;
 
+		console.log( 'IMAGE: ', image );
+		let url = null;
+
+		if( has( image, 'source_url' ) ) {
+			url = image.source_url;
+		}
+
 		const icon = () => (
 		    <Icon
 		        icon={ () => (
 		            <svg>
-		                <path d="M5 4v3h5.5v12h3V7H19V4z" />
+		                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM5 4.5h14c.3 0 .5.2.5.5v8.4l-3-2.9c-.3-.3-.8-.3-1 0L11.9 14 9 12c-.3-.2-.6-.2-.8 0l-3.6 2.6V5c-.1-.3.1-.5.4-.5zm14 15H5c-.3 0-.5-.2-.5-.5v-2.4l4.1-3 3 1.9c.3.2.7.2.9-.1L16 12l3.5 3.4V19c0 .3-.2.5-.5.5z" />
 		            </svg>
 		        ) }
 		    />
@@ -424,7 +437,7 @@ class Artwork extends Component {
 			<MediaPlaceholder
 				icon={ <BlockIcon icon={ icon } /> }
 				labels={ labels }
-				onSelect={ this.onSelectImage }
+				onSelect={ onUpdateImage }
 				notices={ noticeUI }
 				onError={ this.onUploadError }
 				accept="image/*"
@@ -456,7 +469,7 @@ class Artwork extends Component {
 						mediaURL={ url }
 						allowedTypes={ ALLOWED_MEDIA_TYPES }
 						accept="image/*"
-						onSelect={ this.onSelectImage }
+						onSelect={ onUpdateImage }
 						onError={ this.onUploadError }
 					/>
 				) }
@@ -593,16 +606,45 @@ class Artwork extends Component {
 
 export default compose([
 
-	withDispatch( ( dispatch ) => {
+	withDispatch( ( dispatch, { noticeOperations }, { select } ) => {
 		const { toggleSelection } = dispatch( 'core/block-editor' );
+		const { editPost } = dispatch( 'core/editor' );
+		const { removeEditorPanel } = dispatch( 'core/edit-post' );
+
+		//removeEditorPanel( 'featured-image' );
 
 		return {
 			onResizeStart: () => toggleSelection( false ),
 			onResizeStop: () => toggleSelection( true ),
+			onUpdateImage( image ) {
+				editPost( { featured_media: image.id } );
+			},
+			onDropImage( filesList ) {
+				select( 'core/block-editor' )
+					.getSettings()
+					.mediaUpload( {
+						allowedTypes: [ 'image' ],
+						filesList,
+						onFileChange( [ image ] ) {
+							editPost( { featured_media: image.id } );
+						},
+						onError( message ) {
+							noticeOperations.removeAllNotices();
+							noticeOperations.createErrorNotice( message );
+						},
+					} );
+			},
+			onRemoveImage() {
+				editPost( { featured_media: 0 } );
+			},
 		};
 	} ),
 	withSelect( ( select, props ) => {
-		const { getMedia } = select( 'core' );
+		const { getMedia, getPostType } = select( 'core' );
+		const { getCurrentPostId, getEditedPostAttribute } = select(
+			'core/editor'
+		);
+		const featuredImageId = getEditedPostAttribute( 'featured_media' );
 		const { getSettings } = select( 'core/block-editor' );
 		const {
 			attributes: { id, data },
@@ -619,7 +661,10 @@ export default compose([
 	    }
 
 		return {
-			image: id && isSelected ? getMedia( id ) : null,
+			image: featuredImageId ? getMedia( featuredImageId ) : null,
+			currentPostId: getCurrentPostId(),
+			postType: getPostType( getEditedPostAttribute( 'type' ) ),
+			featuredImageId,
 			maxWidth,
 			isRTL,
 			imageSizes,
