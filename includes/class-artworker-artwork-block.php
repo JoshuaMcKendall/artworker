@@ -174,17 +174,14 @@ class Artworker_Artwork_Block extends Artworker_Abstract_Dynamic_Block {
 		do_action( 'artworker_before_render_artwork' );
 
 		$post_id = get_the_ID();
-		$artwork = $attributes;
-		$artwork_id = $attributes['id'];
+		$artwork = artworker_get_artwork( $post_id );
+		$artwork_id = $artwork->get_artwork_id();
 		$artwork_identifier = 'artwork-' . $artwork_id;
-		$artwork_url = $attributes['url'];
-		$artwork_data_json = get_post_meta( $post_id, 'artworker/artwork-data', true );
-		$artwork_data = json_decode( $artwork_data_json, true );
-		$width = $artwork_data['width'];
-		$height = $artwork_data['height'];
+		$width = $artwork->get_width();
+		$height = $artwork->get_height();
 		$classes = 'item artwork';
-		$caption = $artwork['caption'];
-		$align = $artwork['align'];
+		$caption = array_key_exists( 'caption', $attributes ) ? $attributes['caption'] : '';
+		$align = array_key_exists( 'align', $attributes ) ? $attributes['align'] : '';
 
 		if( ! empty( $align ) ) {
 
@@ -205,9 +202,6 @@ class Artworker_Artwork_Block extends Artworker_Abstract_Dynamic_Block {
 			'artwork' 				=> $artwork,
 			'artwork_id'			=> $artwork_id,
 			'artwork_identifier'	=> $artwork_identifier,
-			'artwork_url'			=> $artwork_url,
-			'artwork_data_json'		=> $artwork_data_json,
-			'artwork_data'			=> $artwork_data,
 			'width'					=> $width,
 			'height'				=> $height,
 			'caption'				=> $caption,
