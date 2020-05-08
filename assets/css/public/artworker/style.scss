@@ -5,18 +5,18 @@
 
 .artworker {
 
-  .artworker-artwork-archive-page {
-    margin-bottom: 3em;
-  }
+	.artworker-artwork-archive-page {
+		margin-bottom: 3em;
+	}
 
-  .artwork-loadmore {
+	.artwork-loadmore {
 
-    &.hidden {
-      display: none;
-      visibility: hidden;
-    }
+		&.hidden {
+			display: none;
+			visibility: hidden;
+		}
 
-  }
+	}
 
 	.lazy {
 		opacity: 0;
@@ -31,18 +31,26 @@
 
 	.artwork-block-image {
 		width: 100%;
+		height: 0;
 		cursor: pointer;
-    display: none;
 
-    &.loaded {
-      display: block;
-    }
+	    &.loaded {
+	      display: block;
+	    }
 
 	}
 
-  .artwork-block-noscript-image {
-    width: 100%;   
-  }
+	&.artworker-js {
+
+		.artwork-block-image {
+			height: auto;
+		}
+
+	}
+
+	.artwork-block-noscript-image {
+		width: 100%;   
+	}
 
 	.columns-3 {
 
