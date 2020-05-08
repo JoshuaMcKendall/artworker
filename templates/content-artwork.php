@@ -22,18 +22,18 @@ if ( empty( $artwork ) ) {
 }
 
 $artwork_id = $artwork->get_id();
-$size = 'large';
+$height = $artwork->get_height();
+$width = $artwork->get_width();
 
 ?>
 
-<div id="<?php esc_attr_e( 'artwork-' . $artwork_id ); ?>" class="item artwork" style="width: <?php esc_attr_e( $artwork->get_width( $size ) ); ?>; height: <?php esc_attr_e( $artwork->get_height( $size ) ); ?>;" data-w="<?php esc_attr_e( $artwork->get_width( $size ) ); ?>" data-h="<?php esc_attr_e( $artwork->get_height( $size ) ); ?>" data-artwork="<?php esc_attr_e( $artwork->get_data( 'json' ) ); ?>">
+<div id="<?php esc_attr_e( 'artwork-' . $artwork_id ); ?>" class="item artwork" style="width: <?php esc_attr_e( $width ); ?>; height: <?php esc_attr_e( $height ); ?>;">
 
 	<?php do_action( 'artworker_before_gallery_thumb', $artwork_id ); ?>
 
-    <a id="<?php esc_attr_e( 'artwork-' . $artwork_id . '-link' ); ?>-link" href="<?php echo esc_url( get_permalink( $artwork_id ) ); ?>" class="artwork-link">
+    <a id="<?php esc_attr_e( 'artwork-' . $artwork_id . '-link' ); ?>" href="<?php echo esc_url( get_permalink( $artwork_id ) ); ?>" class="artwork-link">
 
-        <img src="<?php echo esc_url( artworker_get_default_image() ); ?>" data-src="<?php echo esc_url( $artwork->get_src( $size ) );  ?>" data-large_image="<?php echo esc_url( $artwork->get_src( 'full' ) );  ?>" data-large_image_width="<?php esc_attr_e( $artwork->get_width( 'full' ) ); ?>" 
-        data-large_image_height="<?php esc_attr_e( $artwork->get_height( 'full' ) ); ?>" class="responsive-image pswp-image artwork-image lazy">    
+        <img src="<?php echo esc_url( artworker_get_default_image() ); ?>" data-src="<?php echo esc_url( $artwork->get_src( 'large' ) );  ?>" data-full_image="<?php echo esc_url( $artwork->get_src() );  ?>" data-full_image_w="<?php esc_attr_e( $width ); ?>" data-full_image_h="<?php esc_attr_e( $height ); ?>" data-title="<?php esc_attr_e( get_the_title() ); ?>" class="responsive-image pswp-image artwork-image lazy">    
 
     </a>
 

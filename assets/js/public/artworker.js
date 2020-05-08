@@ -5,7 +5,7 @@
 		$body				= $( 'body' ),
 		$gallery 			= $( '#artwork-gallery' ),
 		$justifiedGallery	= null,
-		$artwork    		= $( '.artworker .artworker-artwork-gallery .artwork:not(.noscript)' ),
+		$artwork    		= $( '.artworker .artwork:not(.noscript)' ),
 		$lazy				= $artwork.find( '.artwork-image.lazy' ),
 		$pagination			= $( '.artworker .artworker-pagination' ),
 		$loadmore 			= $( '.artworker .artwork-loadmore' ),
@@ -325,14 +325,14 @@
 						var img = $( el ).find( 'img' );
 
 						if ( img.length ) {
-							var large_image_src = img.attr( 'data-large_image' ),
-								large_image_w   = img.attr( 'data-large_image_width' ),
-								large_image_h   = img.attr( 'data-large_image_height' ),
+							var full_image_src = img.data( 'full_image' ),
+								full_image_w   = img.data( 'full_image_w' ),
+								full_image_h   = img.data( 'full_image_h' ),
 								item            = {
-									src  : large_image_src,
-									w    : large_image_w,
-									h    : large_image_h,
-									title: img.attr( 'data-caption' ) ? img.attr( 'data-caption' ) : img.attr( 'title' )
+									src  : full_image_src,
+									w    : full_image_w,
+									h    : full_image_h,
+									title: img.data( 'title' ) ? img.data( 'title' ) : img.attr( 'title' )
 								};
 							items.push( item );
 						}
@@ -602,15 +602,19 @@
 				e.stopPropagation();
 
 				var	$artworkImage = $( e.target ),
-					$artwork = $artworkImage.parent(),
-					artworkData = $artwork.data( 'artwork' ),
+					artworkID = $artworkImage.data( 'id' ),
+					artworkSrc = $artworkImage.data( 'full_image' ),
+					artworkWidth = $artworkImage.data( 'full_image_w' ),
+					artworkHeight = $artworkImage.data( 'full_image_h' ),
+					artworkMSrc = $artworkImage.attr( 'src' ),
+					artworkTitle = $artworkImage.data( 'title' ),
 					pswpItem = [{
-						'id': 'artwork-' + artworkData.id,
-						'src': artworkData.src,
-						'w': artworkData.width,
-						'h': artworkData.height,
-						'msrc': artworkData.sizes.medium.url,
-						'title': artworkData.title
+						'id': 'artwork-' + artworkID,
+						'src': artworkSrc,
+						'w': artworkWidth,
+						'h': artworkHeight,
+						'msrc': artworkMSrc,
+						'title': artworkTitle
 					}],
 
 					options = {
@@ -643,6 +647,8 @@
 					},
 
 					pswp = new PhotoSwipe( $pswp, PhotoSwipeUI_Default, pswpItem, options );
+
+					console.log( 'item: ', pswpItem );
 
 				pswp.init();
 
@@ -684,7 +690,7 @@
 
 			lazyLoad: function () {
 
-				$( '.artworker .artworker-artwork-gallery .artwork:not(.noscript) .lazy' ).unveil( 3000, function() {
+				$( '.artworker .artwork:not(.noscript) .lazy' ).unveil( 3000, function() {
 					$( this ).css( { opacity: 1 } );
 				} );			
 
@@ -692,7 +698,8 @@
 
 			init : function () {
 
-				$body.addClass( 'artworker-js-loading' );				
+				$body.addClass( 'artworker-js-loading' );	
+				$body.addClass( 'artworker-js' );				
 				$lazy.addClass('loaded');
 
 				Artworker.lazyLoad();
