@@ -69,6 +69,14 @@ class Artworker_Artwork {
 	protected $title = '';
 
 	/**
+	 * Size for this object.
+	 *
+	 * @since 1.0.0
+	 * @var string
+	 */
+	protected $size = '';
+
+	/**
 	 * Height of image.
 	 *
 	 * @since 1.0.0
@@ -93,14 +101,6 @@ class Artworker_Artwork {
 	protected $src = '';
 
 	/**
-	 * sizes of image.
-	 *
-	 * @since 1.0.0
-	 * @var array
-	 */
-	protected $sizes = array();
-
-	/**
 	 * Data of artwork.
 	 *
 	 * @since 1.0.0
@@ -123,7 +123,7 @@ class Artworker_Artwork {
 	protected $cache_group = 'artwork';
 
 
-	public function __construct( $artwork ) {
+	public function __construct( $artwork, $size  = 'full' ) {
 
 		if ( is_numeric( $artwork ) && $artwork > 0 ) {
 			$this->set_id( $artwork );
@@ -134,10 +134,11 @@ class Artworker_Artwork {
 		}
 
 		$artwork_image_id = get_post_thumbnail_id( $this->id );
-		$artwork_data = wp_get_attachment_image_src( $artwork_image_id, 'full' );
+		$artwork_data = wp_get_attachment_image_src( $artwork_image_id, $size );
 
 		$this->set_data( $artwork_data );
 		$this->set_artwork_id( $artwork_image_id );
+		$this->set_size( $size );
 		$this->set_src( $this->data[0] );
 		$this->set_width( $this->data[1] );
 		$this->set_height( $this->data[2] );
@@ -186,6 +187,16 @@ class Artworker_Artwork {
 	}
 
 	/**
+	 * Set size.
+	 *
+	 * @since 1.0.0
+	 * @param string $size.
+	 */
+	public function set_size( $size = '' ) {
+		$this->size = (string) $size;
+	}
+
+	/**
 	 * Set height.
 	 *
 	 * @since 1.0.0
@@ -203,16 +214,6 @@ class Artworker_Artwork {
 	 */
 	public function set_width( $width = 0 ) {
 		$this->width = absint( $width );
-	}
-
-	/**
-	 * Set width.
-	 *
-	 * @since 1.0.0
-	 * @param int $width.
-	 */
-	public function set_sizes( $sizes = array() ) {
-		$this->sizes = is_array( $sizes ) ? (array) $sizes : array();
 	}
 
 	/**
@@ -271,14 +272,8 @@ class Artworker_Artwork {
 	 * @since  1.0.0
 	 * @return int
 	 */
-	public function get_height( $size = '' ) {
-		$size = $this->get_size( $size );
-		$height = $this->height;
-
-		if( is_array( $size ) && array_key_exists( 'height', $size ) )
-			$height = $size['height'];
-
-		return $height;
+	public function get_height() {
+		return $this->height;
 	}
 
 	/**
@@ -287,38 +282,8 @@ class Artworker_Artwork {
 	 * @since  1.0.0
 	 * @return int
 	 */
-	public function get_width( $size = '' ) {
-		$size = $this->get_size( $size );
-		$width = $this->width;
-
-		if( is_array( $size ) && array_key_exists( 'width', $size ) )
-			$width = $size['width'];
-
-		return $width;
-	}
-
-	/**
-	 * Get artwork sizes.
-	 *
-	 * @since  1.0.0
-	 * @return array
-	 */
-	public function get_sizes() {
-		return $this->sizes;
-	}
-
-	/**
-	 * Get artwork size.
-	 *
-	 * @since  1.0.0
-	 * @return array
-	 */
-	public function get_size( $size ) {
-		if( array_key_exists( $size, $this->sizes ) ) {
-			$size = $this->sizes[ $size ];
-		}
-
-		return $size ? $size : false;
+	public function get_width() {
+		return $this->width;
 	}
 
 	/**
@@ -338,15 +303,21 @@ class Artworker_Artwork {
 	 * @param $size 
 	 * @return string
 	 */
-	public function get_src( $src_size = '' ) {
-		$size 	= $this->get_size( $src_size );
-		$src 	= $this->src;
+	public function get_src( $src_size = 'full' ) {
+
+		$src = $this->src;
+
+		if( $src_size != $this->size || empty( $src ) )
+			$artwork = wp_get_attachment_image_src( $this->artwork_id, $src_size );
 			
-		if( is_array( $size ) && array_key_exists( 'url', $size ) )
-			$src = $size['url'];
+		if( ! empty( $artwork ) && is_array( $artwork ) )
+			$src = $artwork[0];
 
 		if( empty( $src ) || ! is_string( $src ) )
 			$src = '';
+
+		if( empty( $this->src ) && $src_size == $this->size )
+			$this->set_src( $src );
 
 		return $src;
 	}
