@@ -211,17 +211,21 @@
 
 		Artworker = {
 
-			utils 			: Utils,
-			galleryItems 	: [],
-			galleryOptions	: { rowHeight: 350, margins: 0, border: 0, selector: '.artwork.item', imgSelector: ' > .artwork-link > .artwork-image' },
-			currentPage		: 1,
-			totalPages		: 1,
-			postsPerPage	: parseInt( Artworker_Data.posts_per_page, 10 ),
-			defaultImage	: Artworker_Data.default_image,
-			loadedPages		: [],
-			rowHeight 		: 300,
-			resizeTimeout 	: false,
-			resizeDelay 	: 300,
+			utils 				: Utils,
+			galleryItems 		: [],
+			galleryOptions		: { rowHeight: 350, margins: 0, border: 0, selector: '.artwork.item', imgSelector: ' > .artwork-link > .artwork-image' },
+			currentPage			: 1,
+			totalPages			: Artworker_Data.total_pages,
+			postsPerPage		: parseInt( Artworker_Data.posts_per_page, 10 ),
+			defaultImage		: Artworker_Data.default_image,
+			loadedPages			: [1],
+			isLoading			: false,
+			rowHeight 			: 300,
+			rowHeightPercentage : 0.33,
+			resizeTimeout 		: false,
+			resizeDelay 		: 300,
+			pswp 				: null,
+			pswpOpen			: false,
 
 			setTotalPages : function () {
 
@@ -248,7 +252,7 @@
 
 			getNextPage : function ( currentPage ) {
 
-				var currentPage = ( currentPage ) ? currentPage : Artworker.currentPage;
+				var currentPage = ( currentPage ) ? currentPage : Artworker.currentPage,
 					nextPage = parseInt( currentPage, 10 ) + 1;			
 
 				return nextPage;
@@ -257,7 +261,7 @@
 
 			getPrevPage : function ( currentPage ) {
 
-				var currentPage = ( currentPage ) ? currentPage : Artworker.currentPage;
+				var currentPage = ( currentPage ) ? currentPage : Artworker.currentPage,
 					prevPage = parseInt( currentPage, 10 ) - 1;
 
 				return prevPage;
@@ -271,13 +275,17 @@
 
 			},
 
+			setIsLoading : function ( loading ) {
+
+				if( Utils.is_boolean( loading ) )
+					Artworker.isLoading = loading;
+
+			},
+
 			isLoadedPage : function (page) {
 
-				if( $.inArray( page, Artworker.loadedPages ) < 0 ) {
-
+				if( $.inArray( page, Artworker.loadedPages ) < 0 )
 					return false;
-
-				}
 
 				return true;
 
@@ -303,12 +311,6 @@
 				}
 
 				return false;
-
-			},
-
-			setGalleryItems : function ( artwork, options = {} ) {
-
-
 
 			},
 
@@ -363,27 +365,61 @@
 
 			},
 
-			loadMoreArtwork : function ( e ) {
+			handleLoadMoreArtwork : function ( e ) {
 
 				e.preventDefault();
 
-				var paged = Artworker.currentPage + 1;
+				Artworker.loadMoreArtwork();
 
-				if( Artworker.currentPage == Artworker.totalPages )
+			},
+
+			loadMoreArtwork : function () {
+
+				var currentPage = Artworker.currentPage,
+					artworkCount = Artworker.galleryItems.length,
+					lastThree = ( artworkCount >= 3 ) ? artworkCount - 3 : artworkCount,
+					loadMoreThreshold = artworkCount - Math.ceil( artworkCount * 0.33 ),
+					currentPage = Artworker.currentPage,
+					paged = Artworker.getNextPage();
+
+
+				if( Artworker.isLoadedPage( paged ) || ! Artworker.isValidPage( paged ) ) 
 					return;
 
-				Artworker.getArtworks({ 'paged' : paged }, function ( response, data ) {
+				Artworker.getArtworks( { 'paged' : paged }, function ( response, data ) {
 
 					var html = response.html,
+						items = response.items,
 						status = response.status,
 						message = response.message;
 
 					if( status == 'success' ) {
 						$gallery.append( html );
 						Artworker.galleryItems = Artworker.getGalleryItems();
-						Artworker.setCurrentPage( data['paged'] );	
+						Artworker.setCurrentPage( data['paged'] );
+						Artworker.addLoadedPage( data['paged'] );	
 						$gallery.trigger('artworker:artworkLoaded', [response, data] );
-						$gallery.justifiedGallery( 'norewind' );				
+						$gallery.justifiedGallery( 'norewind' );
+
+						if( Artworker.pswpOpen ) {
+
+							var index = parseInt( Artworker.pswp.getCurrentIndex(), 10 ) + 1;
+
+							Artworker.galleryItems = $.merge( Artworker.pswp.items, items );
+
+							if( index <= artworkCount && index >= lastThree ) {
+
+								Artworker.pswp.invalidateCurrItems();
+								Artworker.pswp.updateSize(true);
+
+							}
+
+							Artworker.pswp.ui.update();
+
+
+						}
+
+
 					}
 
 					$gallery.trigger( 'artworker:noArtworkLoaded', [response, data] );
@@ -394,9 +430,6 @@
 
 			getArtworks : function ( data = {}, callback = function () {} ) {
 
-				if( Artworker.currentPage == Artworker.totalPages )
-					return;
-
 				var data = $.extend( {
 
 					'action' : 'get_artworks',
@@ -404,31 +437,38 @@
 
 				}, data );
 
+				if( Artworker.isLoadedPage( data.paged ) || ! Artworker.isValidPage( data.paged ) )
+					return;
+
 				$.ajax({
 					url       : Artworker_Data.ajax_url,
 					type      : 'GET',
 					data      : data,
 					beforeSend: function () {
 						//disable loadmore button set to loading
-						$gallery.trigger('artworker:getArtworksBeforeSend', [data, callback] );						
+						$gallery.trigger('artworker:getArtworksBeforeSend', [data, callback] );
+
+						Artworker.setIsLoading( true );					
 
 					}
-				} ).done(function ( response ) {					
+				} ).done( function ( response ) {					
 
 					callback( response, data );
 
 					$gallery.trigger('artworker:getArtworksDone', [response, data, callback] );
 
-				} ).fail(function ( response ) {
+				} ).fail( function ( response ) {
 
 					console.log( response );
 					callback( response, data );
 
 					$gallery.trigger('artworker:getArtworksFailed', [response, data, callback] );
 
-				} ).always(function () {
+				} ).always( function () {
 
 					$gallery.trigger('artworker:getArtworksAlways', [data, callback] );
+
+					Artworker.setIsLoading( false );
 
 				} );				
 
@@ -467,7 +507,7 @@
 
 				var $galleryWidth = $gallery.width(),
 					$windowWidth = $window.width(),
-					percentage = 0.33;
+					percentage = Artworker.rowHeightPercentage;
 
 				Artworker.rowHeight = $galleryWidth * percentage;
 				Artworker.galleryOptions.rowHeight = Artworker.rowHeight;
@@ -533,66 +573,34 @@
 
 				};
 
-				var pswp = new PhotoSwipe( $pswp, PhotoSwipeUI_Default, items, options );
+				Artworker.pswp = new PhotoSwipe( $pswp, PhotoSwipeUI_Default, items, options );
 
-				pswp.listen('afterChange', function() {
+				Artworker.pswp.listen( 'afterChange', function() {
 
-					var index = parseInt( pswp.getCurrentIndex(), 10 ) + 1,
+					var index = parseInt( Artworker.pswp.getCurrentIndex(), 10 ) + 1,
 						artworkCount = Artworker.galleryItems.length,
 						lastThree = ( artworkCount >= 3 ) ? artworkCount - 3 : artworkCount,
-						loadMoreThreshold = Math.ceil( artworkCount * ( 3 / 7 ) );
+						loadMoreThreshold = artworkCount - Math.ceil( artworkCount * 0.33 ),
+						currentPage = Artworker.currentPage,
+						paged = Artworker.getNextPage();
 
 
 					if( index >= loadMoreThreshold && index <= artworkCount ) {
 
-						var data = {
+						if( Artworker.isLoading )
+							return;
 
-							'paged' 	: Artworker.getNextPage( Artworker.determinePage( index ) ),
-
-						};
-
-						pswp.shout( 'getArtwork', data );
-
-						Artworker.getArtworks( data, function( response, data ) {
-
-							var html = response.html,
-								status = response.status,
-								message = response.message,
-								rowHeight = Artworker.getRowHeight( $window ),
-								newGalleryItems = Artworker.getGalleryItems( { 'gallery' : $( '<div>' + html + '</div>' ) } ),
-								newGalleryItemsLength = newGalleryItems.length,
-								startingIndex = pswp.items.length - newGalleryItemsLength;
-
-							console.log( 'Status: ', status );
-							console.log( 'Data: ', data );
-							console.log( 'Response: ', response );
-
-							if( status == 'success' ) {
-								$gallery.append( html );
-								Artworker.setCurrentPage( data.paged );
-								Artworker.galleryItems = $.merge( pswp.items, newGalleryItems );
-								Artworker.lazyLoad();
-								$gallery.justifiedGallery( 'norewind' );
-							}
-
-							if( index <= artworkCount && index >= lastThree ) {
-
-								pswp.invalidateCurrItems();
-								pswp.updateSize(true);
-
-							}
-
-							pswp.ui.update();			
-
-						});
+						Artworker.loadMoreArtwork();
 
 					}
 
-					Artworker.galleryItems = pswp.items;
+					Artworker.galleryItems = Artworker.pswp.items;
 
 				} );
 
-				pswp.init();
+				Artworker.pswp.init();
+				Artworker.pswpOpen = true;
+				Artworker.pswp.listen( 'destroy', function() { Artworker.pswpOpen = false } );
 
 			},
 
@@ -646,11 +654,11 @@
 
 					},
 
-					pswp = new PhotoSwipe( $pswp, PhotoSwipeUI_Default, pswpItem, options );
+					pswp = Artworker.pswp = new PhotoSwipe( $pswp, PhotoSwipeUI_Default, pswpItem, options );
 
-					console.log( 'item: ', pswpItem );
-
-				pswp.init();
+				Artworker.pswp.init();
+				Artworker.pswpOpen = true;
+				Artworker.pswp.listen( 'destroy', function() { Artworker.pswpOpen = false } );
 
 			},
 
@@ -690,7 +698,7 @@
 
 			lazyLoad: function () {
 
-				$( '.artworker .artwork:not(.noscript) .lazy' ).unveil( 3000, function() {
+				$( '.artworker .artwork:not(.noscript) .lazy' ).unveil( 200, function() {
 					$( this ).css( { opacity: 1 } );
 				} );			
 
@@ -706,7 +714,7 @@
 
 				$artwork.on( 'click', '.artwork-block-image', Artworker.openArtwork );
 				$gallery.on( 'click', '.artwork a', Artworker.openGalleryArtwork );
-				$loadmore.on( 'click', Artworker.loadMoreArtwork );
+				$loadmore.on( 'click', Artworker.handleLoadMoreArtwork );
 				$window.on( 'resize', Artworker.maybeSetRowHeight );
 				$window.on( 'load', Artworker.setRowHeight );
 				$window.on( 'load', Artworker.playAnimations );
