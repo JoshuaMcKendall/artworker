@@ -130,11 +130,14 @@ class Artworker_Frontend_Assets extends Artworker_Assets {
 	 */
 	private static function get_script_data( $handle ) {
 
+		global $wp_query;
+
 		switch ( $handle ) {
 			case 'artworker':
 				$params = array(
 					'ajax_url'    		=> Artworker()->ajax_url(),
 					'posts_per_page'	=> get_option( 'artwork_count' ),
+					'total_pages'		=> $wp_query->max_num_pages,
 					'default_image'		=> artworker_get_default_image()
 
 				);
