@@ -84,6 +84,7 @@ class Artworker_Ajax {
 			return;
 
 		$html = '';
+		$items = array();
 		$status = 'error';
 		$message = __( 'No artwork', 'artworker' );
 		$paged = isset( $_GET['paged'] ) ? absint( $_GET['paged'] ) : 1;
@@ -94,7 +95,13 @@ class Artworker_Ajax {
 			'post_status'		=> 'publish',
 			'posts_per_page' 	=> get_option( 'artwork_count' ), 
 			'paged'				=> $paged, 
-			'meta_key'			=> 'artworker/artwork-data'
+			'meta'				=> array(
+				array(
+					'key' 		=> '_thumbnail_id',
+					'compare' 	=> 'EXISTS'
+				)
+			)
+			
 		);
 		
 		$query = new WP_Query( $query_args );
@@ -103,6 +110,15 @@ class Artworker_Ajax {
 
 			while ( $query->have_posts() ) {
 				$query->the_post();
+
+				global $artwork;
+
+				$items[] = array(
+					'title'	=> get_the_title(),
+					'src'	=> $artwork->get_src(),
+					'w'		=> $artwork->get_width(),
+					'h'		=> $artwork->get_height()
+				);
 
 				ob_start();
 
@@ -122,6 +138,7 @@ class Artworker_Ajax {
 		$json = array(
 
 			'html'		=> $html,
+			'items'		=> $items,
 			'status'	=> $status,
 			'message'	=> $message
 
