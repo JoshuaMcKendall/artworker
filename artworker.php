@@ -9,7 +9,7 @@
  * Plugin Name:       Artworker
  * Plugin URI:        https://joshuamckendall.github.io/artworker
  * Description:       Adds an art post type and art gallery to WordPress.
- * Version:           1.0.0
+ * Version:           1.0.1
  * Author:            Joshua McKendall
  * Author URI:        https://joshuamckendall.github.io/
  * License:           GPL-3.0+
