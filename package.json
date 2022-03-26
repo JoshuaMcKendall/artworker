@@ -34,7 +34,7 @@
     "gulp-zip": "^5.0.1",
     "hoek": ">=4.2.1",
     "lodash.template": ">=4.5.0",
-    "minimist": ">=1.2.3",
+    "minimist": ">=1.2.6",
     "webpack": "^4.43.0",
     "webpack-stream": "^5.2.1"
   },
